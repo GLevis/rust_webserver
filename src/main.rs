@@ -32,8 +32,10 @@ fn main() {
 fn handle_get(mut stream: TcpStream, file: &str) {
     let mut chars = file.chars();
     chars.next();
-    // TODO: error handling for file not existing
-    let contents = fs::read_to_string(chars.as_str()).unwrap();
+    let contents = match fs::read_to_string(chars.as_str()) {
+        Ok(contents) => contents,
+        Err(_) => fs::read_to_string("404.html").unwrap(),
+    };
     let length = contents.len();
     let status_line = "HTTP/1.1 200 OK";
     let response =
